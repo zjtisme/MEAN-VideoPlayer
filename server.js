@@ -4,9 +4,17 @@ const path = require('path');
 
 const api = require('./server/routes/api');
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const app = express();
+
+app.use(function(req, res, next){
+  if (req.headers['x-forwarded-proto'] === 'https') {
+    res.redirect('http://' + req.hostname + req.url);
+  } else {
+    next();
+  }
+});
 
 app.use(express.static(path.join(__dirname, 'dist')));
 
